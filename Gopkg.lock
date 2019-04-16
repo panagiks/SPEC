@@ -10,6 +10,17 @@
   version = "v0.2.3"
 
 [[projects]]
+  digest = "1:4ef2c452afd1700966b7263f2e6bb8999ea636be18ce4d3960c02cd74b5da4b8"
+  name = "github.com/jedib0t/go-pretty"
+  packages = [
+    "table",
+    "text",
+  ]
+  pruneopts = "UT"
+  revision = "a37e1e030434d93557ca8a6a77b4cf9d31cc21ff"
+  version = "v4.0.2"
+
+[[projects]]
   digest = "1:c658e84ad3916da105a761660dcaeb01e63416c8ec7bc62256a9b411a05fcd67"
   name = "github.com/mattn/go-colorable"
   packages = ["."]
@@ -59,9 +70,12 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:28d862f4f9bf2d1976d1d320481bff661b7565eb876d4df2a981f79e7f40e4cd"
+  digest = "1:32a91fdcb8f4ae0b2376129fe0091963fa1bbf42d4c1826ad41f7b6410f385c0"
   name = "golang.org/x/sys"
-  packages = ["unix"]
+  packages = [
+    "unix",
+    "windows",
+  ]
   pruneopts = "UT"
   revision = "12500544f89f9420afe9529ba8940bf72d294972"
 
@@ -101,6 +115,7 @@
   analyzer-version = 1
   input-imports = [
     "github.com/c-bata/go-prompt",
+    "github.com/jedib0t/go-pretty/table",
     "golang.org/x/exp/rand",
     "gonum.org/v1/gonum/stat/distuv",
   ]

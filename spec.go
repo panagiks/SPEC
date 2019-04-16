@@ -67,10 +67,7 @@ func executor(in string) {
 				fmt.Printf("No project with name: \"%s\"! Please create one with \"add project\" command!\n", blocks[2])
 				return
 			}
-			fmt.Println("Task:")
-			for k := range dataStore[blocks[2]] {
-				fmt.Printf("\t%s\n", k)
-			}
+			storage.PrintTasks(dataStore[blocks[2]])
 		}
 	}
 	return

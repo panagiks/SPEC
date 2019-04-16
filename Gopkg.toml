@@ -15,3 +15,7 @@ required = ["golang.org/x/exp/rand","github.com/c-bata/go-prompt"]
 [[constraint]]
   branch = "master"
   name = "golang.org/x/exp"
+
+[[constraint]]
+  name = "github.com/jedib0t/go-pretty"
+  version = "4.0.2"
