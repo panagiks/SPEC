@@ -1,0 +1,17 @@
+required = ["golang.org/x/exp/rand","github.com/c-bata/go-prompt"]
+
+[prune]
+  go-tests = true
+  unused-packages = true
+
+[[constraint]]
+  name = "github.com/c-bata/go-prompt"
+  version = "0.2.3"
+
+[[constraint]]
+  branch = "master"
+  name = "gonum.org/v1/gonum"
+
+[[constraint]]
+  branch = "master"
+  name = "golang.org/x/exp"
