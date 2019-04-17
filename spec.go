@@ -93,7 +93,7 @@ func executor(in string) {
 }
 
 func completer(t prompt.Document) []prompt.Suggest {
-	return []prompt.Suggest{
+	s := []prompt.Suggest{
 		{Text: "add"},
 		{Text: "add project"},
 		{Text: "add task"},
@@ -101,6 +101,7 @@ func completer(t prompt.Document) []prompt.Suggest {
 		{Text: "list task"},
 		{Text: "list project"},
 	}
+	return prompt.FilterHasPrefix(s, t.GetWordBeforeCursor(), true)
 }
 
 func main() {
