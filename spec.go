@@ -77,11 +77,8 @@ func executorListTask(blocks []string) {
 	storage.PrintTasks(dataStore[blocks[0]])
 }
 
-func executorListProject(blocks []string) {
-	fmt.Println("Projects:")
-	for k := range dataStore {
-		fmt.Printf("\t%s\n", k)
-	}
+func executorListProject() {
+	storage.PrintProjects(&dataStore)
 }
 
 func executor(in string) {

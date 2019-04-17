@@ -44,7 +44,7 @@ func GetTasksTable(tasks map[string]*SPECTask) table.Writer {
 			tasks[k].Name,
 			tasks[k].Estimation,
 			tasks[k].Confidence,
-			math.Round(tasks[k].Mean*100) / 100,
+			floatRound(tasks[k].Mean),
 		})
 	}
 	return t
@@ -55,4 +55,37 @@ func getTasksTableHeader() table.Writer {
 	t.SetOutputMirror(os.Stdout)
 	t.AppendHeader(table.Row{"Name", "Estimation", "Confidence", "Mean"})
 	return t
+}
+
+func PrintProjects(dataStore *SPECStorage) {
+	t := GetProjectsTable(dataStore)
+	t.Render()
+}
+
+func GetProjectsTable(dataStore *SPECStorage) table.Writer {
+	t := getProjectsTableHeader()
+	var meanSum float64
+	for k := range *dataStore {
+		meanSum = 0
+		for j := range (*dataStore)[k] {
+			meanSum += floatRound((*dataStore)[k][j].Mean)
+		}
+		t.AppendRow([]interface{}{
+			k,
+			len((*dataStore)[k]),
+			meanSum,
+		})
+	}
+	return t
+}
+
+func getProjectsTableHeader() table.Writer {
+	t := table.NewWriter()
+	t.SetOutputMirror(os.Stdout)
+	t.AppendHeader(table.Row{"Name", "# of Tasks", "Mean Sum"})
+	return t
+}
+
+func floatRound(number float64) float64 {
+	return math.Round(number*100) / 100
 }
