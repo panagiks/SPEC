@@ -13,64 +13,86 @@ var (
 	dataStore storage.SPECStorage
 )
 
+func executorAdd(blocks []string) {
+	if len(blocks) < 1 {
+		fmt.Println("Must select what to add; Options {project, task}!")
+		return
+	}
+	switch blocks[0] {
+	case "task":
+		executorAddTask(blocks[1:])
+	case "project":
+		executorAddProject(blocks[1:])
+	}
+}
+
+func executorAddTask(blocks []string) {
+	if len(blocks) < 4 {
+		fmt.Println("Usage: \"add task {project} {name} {estimation} {confidence}\"!")
+		return
+	}
+	if median, err := strconv.ParseFloat(blocks[2], 64); err == nil {
+		if sigma, err := strconv.ParseFloat(blocks[3], 64); err == nil {
+			_, ok := dataStore[blocks[0]]
+			if !ok {
+				fmt.Printf("No project with name: \"%s\"! Please create one with \"add project\" command!\n", blocks[0])
+				return
+			}
+			dataStore[blocks[0]][blocks[1]] = storage.NewTask(blocks[1], median, sigma)
+		}
+	}
+}
+
+func executorAddProject(blocks []string) {
+	if len(blocks) < 1 {
+		fmt.Println("Usage: \"add project {name}\"!")
+		return
+	}
+	dataStore[blocks[0]] = storage.NewProject()
+}
+
+func executorList(blocks []string) {
+	if len(blocks) < 1 {
+		fmt.Println("Must select what to list; Options {project, task}!")
+		return
+	}
+	switch blocks[0] {
+	case "project":
+		executorListProject()
+	case "task":
+		executorListTask(blocks[1:])
+	}
+}
+
+func executorListTask(blocks []string) {
+	if len(blocks) < 1 {
+		fmt.Println("When listing tasks you must define a project!")
+		return
+	}
+	_, ok := dataStore[blocks[0]]
+	if !ok {
+		fmt.Printf("No project with name: \"%s\"! Please create one with \"add project\" command!\n", blocks[0])
+		return
+	}
+	storage.PrintTasks(dataStore[blocks[0]])
+}
+
+func executorListProject(blocks []string) {
+	fmt.Println("Projects:")
+	for k := range dataStore {
+		fmt.Printf("\t%s\n", k)
+	}
+}
+
 func executor(in string) {
 	in = strings.TrimSpace(in)
 	blocks := strings.Split(in, " ")
 	switch blocks[0] {
 	case "add":
-		if len(blocks) < 2 {
-			fmt.Println("Must select what to add; Options {project, task}!")
-			return
-		}
-		switch blocks[1] {
-		case "task":
-			if len(blocks) < 6 {
-				fmt.Println("Usage: \"add task {project} {name} {estimation} {confidence}\"!")
-				return
-			}
-			if median, err := strconv.ParseFloat(blocks[4], 64); err == nil {
-				if sigma, err := strconv.ParseFloat(blocks[5], 64); err == nil {
-					_, ok := dataStore[blocks[2]]
-					if !ok {
-						fmt.Printf("No project with name: \"%s\"! Please create one with \"add project\" command!\n", blocks[2])
-						return
-					}
-					dataStore[blocks[2]][blocks[3]] = storage.NewTask(blocks[3], median, sigma)
-				}
-			}
-			return
-		case "project":
-			if len(blocks) < 3 {
-				fmt.Println("Usage: \"add project {name}\"!")
-				return
-			}
-			dataStore[blocks[2]] = storage.NewProject()
-		}
+		executorAdd(blocks[1:])
 	case "list":
-		if len(blocks) < 2 {
-			fmt.Println("Must select what to list; Options {project, task}!")
-			return
-		}
-		switch blocks[1] {
-		case "project":
-			fmt.Println("Projects:")
-			for k := range dataStore {
-				fmt.Printf("\t%s\n", k)
-			}
-		case "task":
-			if len(blocks) < 3 {
-				fmt.Println("When listing tasks you must define a project!")
-				return
-			}
-			_, ok := dataStore[blocks[2]]
-			if !ok {
-				fmt.Printf("No project with name: \"%s\"! Please create one with \"add project\" command!\n", blocks[2])
-				return
-			}
-			storage.PrintTasks(dataStore[blocks[2]])
-		}
+		executorList(blocks[1:])
 	}
-	return
 }
 
 func completer(t prompt.Document) []prompt.Suggest {
