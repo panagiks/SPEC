@@ -17,6 +17,7 @@ type SPECTask struct {
 	Estimation float64 `json:"estimation"`
 	Confidence float64 `json:"confidemce"`
 	Mean       float64 `json:"mean"`
+	Actual     float64 `json:"actual"`
 }
 
 func NewStorage() SPECStorage {
@@ -29,7 +30,7 @@ func NewProject() SPECProject {
 
 func NewTask(name string, estimation float64, confidemce float64) *SPECTask {
 	dist := distuv.LogNormal{math.Log(estimation), confidemce, nil}
-	return &SPECTask{name, estimation, confidemce, dist.Mean()}
+	return &SPECTask{name, estimation, confidemce, dist.Mean(), 0.0}
 }
 
 func PrintTasks(tasks map[string]*SPECTask) {
@@ -45,6 +46,7 @@ func GetTasksTable(tasks map[string]*SPECTask) table.Writer {
 			tasks[k].Estimation,
 			tasks[k].Confidence,
 			floatRound(tasks[k].Mean),
+			tasks[k].Actual,
 		})
 	}
 	return t
@@ -53,11 +55,11 @@ func GetTasksTable(tasks map[string]*SPECTask) table.Writer {
 func getTasksTableHeader() table.Writer {
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
-	t.AppendHeader(table.Row{"Name", "Estimation", "Confidence", "Mean"})
+	t.AppendHeader(table.Row{"Name", "Estimation", "Confidence", "Mean", "Actual"})
 	return t
 }
 
-func PrintProjects(dataStore *SPECStorage) {
+func (dataStore *SPECStorage) PrintProjects() {
 	t := GetProjectsTable(dataStore)
 	t.Render()
 }
@@ -65,15 +67,19 @@ func PrintProjects(dataStore *SPECStorage) {
 func GetProjectsTable(dataStore *SPECStorage) table.Writer {
 	t := getProjectsTableHeader()
 	var meanSum float64
+	var actualSum float64
 	for k := range *dataStore {
 		meanSum = 0
+		actualSum = 0
 		for j := range (*dataStore)[k] {
 			meanSum += floatRound((*dataStore)[k][j].Mean)
+			actualSum += floatRound((*dataStore)[k][j].Actual)
 		}
 		t.AppendRow([]interface{}{
 			k,
 			len((*dataStore)[k]),
 			meanSum,
+			actualSum,
 		})
 	}
 	return t
@@ -82,7 +88,7 @@ func GetProjectsTable(dataStore *SPECStorage) table.Writer {
 func getProjectsTableHeader() table.Writer {
 	t := table.NewWriter()
 	t.SetOutputMirror(os.Stdout)
-	t.AppendHeader(table.Row{"Name", "# of Tasks", "Mean Sum"})
+	t.AppendHeader(table.Row{"Name", "# of Tasks", "Mean Sum", "Actual Sum"})
 	return t
 }
 
