@@ -42,7 +42,7 @@ func NewProject() SPECProject {
 
 func NewTask(name string, estimation float64, confidemce float64) *SPECTask {
 	dist := distuv.LogNormal{math.Log(estimation), confidemce, nil}
-	return &SPECTask{name, estimation, confidemce, dist.Mean(), 0.0}
+	return &SPECTask{name, estimation, confidemce, floatRound(dist.Mean()), 0.0}
 }
 
 func PrintTasks(tasks map[string]*SPECTask) {
