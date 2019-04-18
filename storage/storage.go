@@ -1,6 +1,8 @@
 package storage
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"math"
 	"os"
 
@@ -18,6 +20,16 @@ type SPECTask struct {
 	Confidence float64 `json:"confidemce"`
 	Mean       float64 `json:"mean"`
 	Actual     float64 `json:"actual"`
+}
+
+func (storage *SPECStorage) Save(target string) {
+	jsonString, _ := json.Marshal(storage)
+	_ = ioutil.WriteFile(target, jsonString, 0644)
+}
+
+func (storage *SPECStorage) Load(target string) {
+	jsonString, _ := ioutil.ReadFile(target)
+	json.Unmarshal(jsonString, storage)
 }
 
 func NewStorage() SPECStorage {

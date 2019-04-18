@@ -162,6 +162,18 @@ func baseExecutor(blocks []string) {
 		addProject(blocks[1])
 	case "list", "l":
 		listProject()
+	case "save":
+		if len(blocks) < 2 {
+			fmt.Println("Usage: \"save {pathToFile}\"!")
+			return
+		}
+		dataStore.Save(blocks[1])
+	case "load":
+		if len(blocks) < 2 {
+			fmt.Println("Usage: \"load {pathToFile}\"!")
+			return
+		}
+		dataStore.Load(blocks[1])
 	default:
 		selectProject(blocks[0])
 	}
@@ -171,6 +183,8 @@ func baseCompleter(t prompt.Document) []prompt.Suggest {
 	s := []prompt.Suggest{
 		{Text: "add", Description: "Add a new project; Syntax: \"add {projectName}\""},
 		{Text: "list", Description: "List projects"},
+		{Text: "save", Description: "Save current state to a file; Syntax: \"save {pathToFile}\""},
+		{Text: "load", Description: "Load state from a file; Syntax: \"load {pathToFile}\""},
 	}
 	for k := range dataStore {
 		s = append(s, prompt.Suggest{Text: k, Description: "Select project for further options"})
